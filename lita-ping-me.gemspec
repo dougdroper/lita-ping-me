@@ -7,9 +7,9 @@ Gem::Specification.new do |spec|
   spec.version       = '0.0.1'
   spec.authors       = ["Douglas Roper"]
   spec.email         = ["dougdroper@gmail.com"]
-  spec.summary       = %q{Lita plugin for checking statuses of websites}
+  spec.summary       = %q{Lita plugin for periodically checking statuses of websites}
   spec.description   = %q{
-    periodically checks status of website and alerts chat room if response code is 500
+    periodically checks status of website and alerts chat room if response error
   }
   spec.homepage      = "http://github.com/dougdroper/lita-ping-me"
   spec.license       = "MIT"
