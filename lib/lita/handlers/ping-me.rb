@@ -13,6 +13,8 @@ module Lita
       config :room
       config :frequency
 
+      http.get "/notify/:id", :notify
+
       route(/^channel find (.+)/) do |response|
         response.reply(channels(response.args.last).fetch('id', 'not found'))
       end
@@ -58,6 +60,13 @@ module Lita
         errors.each do |url, status|
           send_message("#{url} is down: #{status.inspect}")
         end
+      end
+
+      def notify(request, response)
+        id = request.env["router.params"][:id]
+        msg = id.split('_').join(" ")
+        send_message("#{msg}")
+        response.body << "#{msg} #{request.user_agent}!"
       end
 
       private
