@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "lita-ping-me"
-  spec.version       = '0.0.3'
+  spec.version       = '0.0.4'
   spec.authors       = ["Douglas Roper"]
   spec.email         = ["dougdroper@gmail.com"]
   spec.summary       = %q{Lita plugin for periodically checking statuses of websites}
