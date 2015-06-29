@@ -51,11 +51,11 @@ module Lita
       end
 
       def sleep(response)
-        @sleeping = true
+        redis.set("sleep", true)
         time = parse_time(response.args.first.to_i)
         timer.stop
         after(time) do
-          @sleeping = false
+          redis.set("sleep", false)
           start_pinging
         end
         response.reply("Sure, will sleep for #{seconds_to_minutes(time)} minutes")
@@ -68,7 +68,7 @@ module Lita
       end
 
       def notify(request, response)
-        return if @sleeping
+        return if redis.get("sleep") == 'true'
         id = request.env["router.params"][:id]
         msg = id.split('_').join(" ")
         send_message("#{msg}")
@@ -76,7 +76,7 @@ module Lita
       end
 
       def wake(_)
-        @sleeping = false
+        redis.set("sleep", false)
       end
 
       private
