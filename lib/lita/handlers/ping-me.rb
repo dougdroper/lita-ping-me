@@ -30,6 +30,7 @@ module Lita
       end
 
       route(/^sleep[\s+]?(\d+)?/, :sleep)
+      route(/^wake?/, :wake)
 
       route(/^any errors\?/, :check_for_errors)
 
@@ -50,9 +51,13 @@ module Lita
       end
 
       def sleep(response)
+        @sleeping = true
         time = parse_time(response.args.first.to_i)
         timer.stop
-        after(time) { start_pinging }
+        after(time) do
+          @sleeping = false
+          start_pinging
+        end
         response.reply("Sure, will sleep for #{seconds_to_minutes(time)} minutes")
       end
 
@@ -63,10 +68,15 @@ module Lita
       end
 
       def notify(request, response)
+        return if @sleeping
         id = request.env["router.params"][:id]
         msg = id.split('_').join(" ")
         send_message("#{msg}")
-        response.body << "#{msg} #{request.user_agent}!"
+        response.body << "#{msg}"
+      end
+
+      def wake(_)
+        @sleeping = false
       end
 
       private
@@ -100,7 +110,7 @@ module Lita
       end
 
       def target(payload = {})
-        @target ||= Source.new(room: config.room)
+        @target ||= Source.new(room: config.room || '')
       end
 
       def send_message(msg)

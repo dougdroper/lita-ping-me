@@ -59,9 +59,25 @@ RSpec.describe Lita::Handlers::PingMe, lita_handler: true do
       let(:current_status) { {'http://test.com' => { code: 200, time: 4.882903 }} }
 
       it 'responds with the correct status' do
-        expect(Lita::Handlers::Connection).to receive(:new).with(["http://test.com"]).and_return(response)
+        expect(Lita::Handlers::Connection).to receive(:new).and_return(response)
         send_message("status <http://test.com|test.com>")
         expect(replies.last).to eq("http://test.com: code 200, time: 4.882903")
+      end
+    end
+
+    context 'notify' do
+      it 'notifies when something goes wrong' do
+        response = http.get("/notify/something_has_gone_wrong")
+        expect(response.body).to eq("something has gone wrong")
+      end
+
+      it 'doesn\'t notify when it is sleeping' do
+        send_message('sleep')
+        response = http.get("/notify/something_has_gone_wrong")
+        expect(response.body).to eq("")
+        send_message('wake')
+        response = http.get("/notify/something_has_gone_wrong")
+        expect(response.body).to eq('something has gone wrong')
       end
     end
   end
